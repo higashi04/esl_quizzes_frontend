@@ -1,0 +1,8 @@
+.signUp-bg {
+    background-color: magenta;
+}
+.signUp-header, .signUp-radios {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
