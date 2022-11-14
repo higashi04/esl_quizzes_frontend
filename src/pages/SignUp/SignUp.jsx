@@ -1,15 +1,22 @@
 import React from "react";
 import { useState } from "react";
 import "./SignUp.css";
+import ErrorBox from "../../components/ErrorBox/ErrorBox";
+
+const passwordMsg = [];
 const lowerCaseLetterRegex = /[a-z]/g;
 const upperCaseLetterRegex = /[A-Z]/g;
+const numbersPassword = /[0-9]/g;
+
 const SignUp = () => {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
   const [email, setEmail] = useState(null);
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [profileType, setProfileType] = useState("Student");
+  const [passwordError, setPasswordError] = useState(false);
 
   const handleRadio = (event) => {
     
@@ -17,7 +24,6 @@ const SignUp = () => {
   };
   const handleSignUp = async() =>{
     try {
-      console.log("btn clicked")
       const data = {
           username: username,
           password: password,
@@ -26,12 +32,27 @@ const SignUp = () => {
           lastName: lastName,
           profileType: profileType,
       }
+      while(passwordMsg.length > 0) {
+        passwordMsg.pop();
+      }
       if(username === null) {
-        throw new Error("Agregar nombre usuario");
+       passwordMsg.push("Agregar nombre usuario");
       }
       if(password.match(lowerCaseLetterRegex) && !password.match(upperCaseLetterRegex)) {
-        alert("Contraseña no valida, agregar al menos una mayuscula");
-        throw new Error("password invalid");
+       passwordMsg.push("Agregar al menos una mayúscula.");
+      }
+      if(!password.match(numbersPassword)) {
+        passwordMsg.push("Su contraseña debe de tener al menos un número.")
+      }
+      if (password.length < 8) {
+        passwordMsg.push("Su contraseña debe de ser al menos ocho carácteres.")
+      }
+      if(password !== confirmPassword) {
+        passwordMsg.push("Las contraseñas no coinciden")
+      }
+      if(passwordMsg.length > 0) { 
+        setPasswordError(true)
+        throw new Error("password validation invalid") 
       }
       await fetch("http://localhost:8080/usuario/registrarse", {
         method: "POST",
@@ -40,6 +61,7 @@ const SignUp = () => {
         body: JSON.stringify(data)
       })
     } catch (error) {
+      
       console.error(error)
     }
   }
@@ -67,20 +89,41 @@ const SignUp = () => {
               </label>
             </div>
           </div>
+        </div>
+        <div className="row mb-3">
           <div className="col">
+              <div className="form-floating">
+                <input
+                  className="form-control"
+                  name="password"
+                  id="password"
+                  placeholder="Contraseña"
+                  type="password"
+                  onInput={(event) => {
+                    setPassword(event.target.value);
+                  }}
+                />
+                <label htmlFor="password" className="form-label">
+                  Contraseña
+                </label>
+              </div>
+          </div>
+        </div>
+        <div className="row mb-3">
+        <div className="col">
             <div className="form-floating">
               <input
                 className="form-control"
-                name="password"
-                id="password"
+                name="passwordConfirm"
+                id="passwordConfirm"
                 placeholder="Contraseña"
                 type="password"
                 onInput={(event) => {
-                  setPassword(event.target.value);
+                  setConfirmPassword(event.target.value);
                 }}
               />
               <label htmlFor="password" className="form-label">
-                Constraseña
+                Confirmar Contraseña
               </label>
             </div>
           </div>
@@ -161,7 +204,7 @@ const SignUp = () => {
                 type="radio"
                 name="profile"
                 id="Alumno"
-                checked
+                defaultChecked
                 onClick={()=> handleRadio("Student")}
               />
               <label className="form-check-label" htmlFor="Alumno" value="Student" onClick={()=> handleRadio("Student")}>
@@ -172,6 +215,13 @@ const SignUp = () => {
         </div>
         <div className="row mb-3">
           <button className="btn btn-primary" onClick={() => handleSignUp()}>Submit</button>
+        </div>
+        <div id="errorMessage" className="row mb-3">
+          <ul>
+                {passwordError &&
+                  passwordMsg.map(item => <ErrorBox listItem={item} />) 
+                }
+          </ul>
         </div>
       </div>
       
