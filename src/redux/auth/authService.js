@@ -6,10 +6,11 @@ const login = async(userData) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userData)
     })
-    if(response.data) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+    const json = await response.json();
+    if(json) {
+        localStorage.setItem("user", JSON.stringify(json));
     }
-    return response.data;
+    return json;
 };
 
 const logout = () => { localStorage.removeItem("user"); };
