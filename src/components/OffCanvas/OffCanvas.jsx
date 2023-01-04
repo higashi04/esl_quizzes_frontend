@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
 import { Offcanvas } from 'react-bootstrap';
 import {SlBookOpen} from "react-icons/sl";
 import { useSelector } from 'react-redux';
-import { FaSignOutAlt } from 'react-icons/fa'
+import { FaSignOutAlt } from 'react-icons/fa';
 import "./OffCanvas.css"
 
 const OffCanvas = () => {
@@ -26,7 +27,10 @@ const OffCanvas = () => {
         <Offcanvas.Body>
             <div className="container">
             <div className="row">
-            {userData && userData.profileType === "Teacher" ? "Teacher" : "Student"}
+            {userData && userData.profileType}
+            </div>
+            <div className="row my-5">
+                <Link className='btn btn-outline-primary my-2' to={"/4A"}> In the Morning </Link>
             </div>
             <div className="row">
             {userData && <button className='btn btn-outline-dark'>Cerrar Sesión <FaSignOutAlt/> </button>}
