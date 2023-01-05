@@ -6,6 +6,9 @@ const TextBox = (props) => {
       <div>
       {props.text}
       </div>
+      <div>
+        <img className='textBoxImg m-5' src={props.pict} alt="descriptive picture"  />
+      </div>
     </div>
   )
 }
